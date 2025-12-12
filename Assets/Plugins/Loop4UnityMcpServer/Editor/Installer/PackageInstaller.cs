@@ -50,7 +50,7 @@ namespace LoopMcpServer.Editor.Installer
 
                 string fileName = _fileSystem.GetFileName(file);
                 string destFile = NormalizePath(Path.Combine(targetDir, fileName));
-                
+
                 _fileSystem.CopyFile(file, destFile, true);
             }
 
@@ -58,7 +58,7 @@ namespace LoopMcpServer.Editor.Installer
             {
                 string directoryName = _fileSystem.GetFileName(directory);
                 string destDir = NormalizePath(Path.Combine(targetDir, directoryName));
-                
+
                 CopyDirectoryRecursive(directory, destDir);
             }
         }
