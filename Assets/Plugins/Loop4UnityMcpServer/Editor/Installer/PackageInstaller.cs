@@ -20,10 +20,11 @@ namespace LoopMcpServer.Editor.Installer
                 return false;
             }
 
-            // if (_fileSystem.DirectoryExists(targetPath))
-            // {
-            //     return false; 
-            // }
+            if (_fileSystem.DirectoryExists(targetPath))
+            {
+                Debug.LogWarning($"[PackageInstaller] Target already exists, skipping install: {targetPath}");
+                return false;
+            }
 
             try
             {
@@ -48,7 +49,7 @@ namespace LoopMcpServer.Editor.Installer
                 if (file.EndsWith(".meta")) continue;
 
                 string fileName = _fileSystem.GetFileName(file);
-                string destFile = Path.Combine(targetDir, fileName);
+                string destFile = NormalizePath(Path.Combine(targetDir, fileName));
                 
                 _fileSystem.CopyFile(file, destFile, true);
             }
@@ -56,10 +57,13 @@ namespace LoopMcpServer.Editor.Installer
             foreach (var directory in _fileSystem.GetDirectories(sourceDir))
             {
                 string directoryName = _fileSystem.GetFileName(directory);
-                string destDir = Path.Combine(targetDir, directoryName);
+                string destDir = NormalizePath(Path.Combine(targetDir, directoryName));
                 
                 CopyDirectoryRecursive(directory, destDir);
             }
         }
+
+        // Normalize to forward slashes so tests and Unity paths stay consistent across platforms.
+        private static string NormalizePath(string path) => path.Replace("\\", "/");
     }
 }
