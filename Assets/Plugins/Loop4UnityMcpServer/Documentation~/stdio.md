@@ -110,20 +110,10 @@ uv run --directory "C:/path/to/STDIO~" loop-mcp-stdio --retry-time 3 --retry-cou
 ### Communication Flow
 
 1. **MCP Client → Bridge (STDIO):** MCP Client sends JSON-RPC 2.0 messages via stdin
-2. **Bridge → Unity (TCP):** Bridge forwards messages with 4-byte length prefix
-3. **Unity → Bridge (TCP):** Unity responds with length-prefixed JSON
+2. **Bridge → Unity (TCP):** Bridge forwards messages to Unity Tcp Server
+3. **Unity → Bridge (TCP):** Unity Tcp Server responds back to Bridge
 4. **Bridge → MCP Client (STDIO):** Bridge writes response to stdout
 
-### Message Framing (TCP)
-
-Messages over TCP use length-prefixed framing:
-- **4-byte big-endian length prefix** - Indicates message size
-- **UTF-8 encoded JSON payload** - The actual MCP message
-
-Example frame for `{"jsonrpc":"2.0","method":"ping","id":1}`:
-```
-[00 00 00 26] [7B 22 6A 73 6F 6E 72 70 63 22 ...]
-  └─ Length      └─ JSON payload (38 bytes)
 ```
 
 ## Troubleshooting
@@ -213,40 +203,8 @@ Postman supports MCP (Model Context Protocol) natively, including STDIO transpor
    > }
    > ```
 
-4. **Click "Load Methods"** - Postman will connect and discover available tools, prompts, and resources
+4. **Click "COnnect"** - Postman will connect and discover available tools, prompts, and resources
 
-5. **Browse and test:**
-   - **Tools tab:** View available tools (e.g., `echo`, `get_unity_info`)
-   - **Resources tab:** View available resources (e.g., `unity://project/info`)
-   - **Prompts tab:** View available prompts (e.g., `greeting`)
-
-6. **Execute a method:**
-   - Select a tool/resource/prompt
-   - Fill in the required arguments
-   - Click **Run** to execute
-
-7. **View results:**
-   - **Response tab:** Shows the JSON response from the server
-   - **Notifications tab:** Shows real-time notifications and logs
-
-### Example: Testing the Echo Tool
-
-1. In the **Tools** tab, select `echo`
-2. Set the `text` argument to `"Hello from Postman!"`
-3. Click **Run**
-4. View the response in the Response tab
-
-### Example: Reading a Resource
-
-1. In the **Resources** tab, select `unity://project/info`
-2. Click **Run**
-3. View the Unity project information in the response
-
-### Debugging Tips
-
-- **Check Notifications tab** for connection status and errors
-- **Unity Console** shows `[LoopMcp]` logs for server-side activity
-- **Use verbose logging** in Unity settings for detailed message traces
 
 ### Reference
 

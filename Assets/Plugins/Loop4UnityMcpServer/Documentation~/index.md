@@ -1,30 +1,45 @@
 # Loop MCP Server for Unity
 
-A Model Context Protocol (MCP) server implementation for Unity Editor that enables AI assistants to interact with Unity directly.
+A Model Context Protocol (MCP) server implementation for Unity Editor that enables AI assistants to perform **almost** anything in Unity Editor using c# scripts and Unity Engine/Unity Editor scripting API. That includes, but is not limited to, scene manipulation, asset management, configuration, and more.
+
+## Features
+
+- **Access to Unity Editor/Unity Engine API**: Perform any task available through public API or reflection
+- **Auto-start**: Server starts automatically with Unity Editor
+- **STDIO transport**: No need to start separate server processes
+- **Domain reload safe**: Handles Unity domain reloads gracefully
+- **Extensible**: Add new tools, async tools, resources or prompts by implementing interfaces anywhere in the codebase
+
+## Security considerations
+
+
+## Available assemblies
 
 ## Architecture
 
 ```
-┌─────────────┐     STDIO      ┌─────────────────┐      TCP      ┌─────────────────┐
-│  MCP Client │ ◄────────────► │  STDIO Bridge   │ ◄───────────► │  Unity Server   │
-│             │                │    (Python)     │               │  (This Package) │
-└─────────────┘                └─────────────────┘               └─────────────────┘
+┌─────────────────┐      TCP      ┌─────────────────┐     STDIO      ┌─────────────┐
+│  Unity Server   │ ◄───────────► │  STDIO Bridge   │ ◄────────────► │  MCP Client │
+│  (This Package) │               │ (Python script) │                │             │
+└─────────────────┘               └─────────────────┘                └─────────────┘
 ```
 
-## Features
+## Requirements
 
-- **Auto-start**: Server starts automatically with Unity Editor
-- **Domain reload safe**: Handles Unity domain reloads gracefully
-- **Extensible**: Easy to add new tools, prompts, and resources
-- **Async support**: Supports both sync and async tools via UniTask
-- **Testable**: Includes unit tests for all components
+- Tested with Unity 2022.3 LTS
+- UniTask:  Efficient allocation free async/await integration for Unity. Refer to [UniTask UPM Package](https://github.com/Cysharp/UniTask?tab=readme-ov-file#upm-package) for installation instructions
+- UV: Python package and project manager, allows to run python scripts out of the box, without manual installation. Refer to [uv installation](https://github.com/astral-sh/uv?tab=readme-ov-file#installation) for instructions.
 
 ## Installation
 
+Install via git URL:
 https://github.com/Signal-Loop/Loop4UnityMCPServer.git?path=Assets/Plugins/Loop4UnityMcpServer
 
 ## MCP Configuration
 
+Run menu item: **Tools/LoopMcpServer/Log MCP Configuration** to log configuration for your project to console.
+
+### MCP Client Configuration
 ```json
 {
   "mcpServers": {
@@ -47,41 +62,13 @@ https://github.com/Signal-Loop/Loop4UnityMCPServer.git?path=Assets/Plugins/Loop4
 
 > **Note:** Replace `C:/Users/YOUR_USERNAME/path/to/...` with the actual path to your Unity project's STDIO folder.
 
-## Configuration
+## Server Configuration
 
-1. Create settings asset: **Assets > Create > LoopMcpServer > Server Settings**
-2. Place in `Resources/` folder for auto-loading
-3. Configure port (default: 21088) and other settings
+1. Navigate to `Resources/` folder
+2. Create settings asset: **Right Click > Create > LoopMcpServer > Server Settings**
+3. Configure port (default: 21088) and other options as needed
 
-
-## Components
-
-### Protocol (`Protocol/`)
-- `McpProtocol.cs` - MCP protocol constants and version
-- `McpMessages.cs` - JSON-RPC message types
-
-### Interfaces (`Interfaces/`)
-- `ITool` - Interface for synchronous tools
-- `IToolAsync` - Interface for asynchronous tools (using UniTask)
-- `IPrompt` - Interface for prompt templates
-- `IResource` - Interface for resources
-
-### Registry (`Registry/`)
-- `McpRegistry.cs` - Auto-discovers and registers tools/prompts/resources via reflection
-
-### Handlers (`Handlers/`)
-- `McpMessageHandler.cs` - Handles JSON-RPC message dispatching
-
-### Server (`Server/`)
-- `LoopMcpTcpServer.cs` - TCP server with auto-start and domain reload handling
-
-### Settings (`Settings/`)
-- `LoopMcpServerSettings.cs` - ScriptableObject for server configuration
-
-### Sample Tools (`Samples~/`)
-- Example implementations demonstrating how to create tools, prompts, and resources
-
-## Creating Custom Tools
+## Adding Tools
 
 ### Synchronous Tool
 
@@ -136,12 +123,13 @@ public class MyAsyncTool : IToolAsync
 
 ## Menu Commands
 
-- **LoopMcpServer > Refresh Registry** - Re-scan for new tools/prompts/resources
-- **LoopMcpServer > Restart Server** - Restart the TCP server
+- **Tool > LoopMcpServer > Refresh Registry** - Re-scan for new tools/prompts/resources
+- **Tool > LoopMcpServer > Restart Server** - Restart the TCP server
+- **Tool > LoopMcpServer > Log MCP Configuration** - Log MCP client configuration to console
 
 ## STDIO Bridge
 
-See `stdio.md` for setting up the Python STDIO bridge for MCP clients.
+See [stdio.md](stdio.md) for setting up the Python STDIO bridge for MCP clients.
 
 ## Testing
 
