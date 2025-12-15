@@ -1,0 +1,9 @@
+{
+	"servers": {
+		"loop-unity-http": {
+			"url": "http://127.0.0.1:3001/mcp/",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}

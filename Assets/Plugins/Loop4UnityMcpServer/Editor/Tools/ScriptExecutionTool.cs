@@ -30,7 +30,9 @@ namespace LoopMcpServer.Tools
             "UnityEngine.UI",
             "UnityEngine.UIElementsModule",
             "UnityEngine.UIModule",
-            "UnityEditor.CoreModule"
+            "UnityEditor.CoreModule",
+            "UnityEngine.TestRunner",
+            "UnityEditor.TestRunner"
         };
 
         public string Name => "executeCSharpScriptInUnityEditor";
