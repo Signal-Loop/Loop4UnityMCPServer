@@ -28,12 +28,12 @@ A Model Context Protocol (MCP) server for the Unity Editor that enables AI assis
 
 ## Security considerations
 
-This package executes LLM-generated C# code (including via reflection) with the same privileges as the Unity Editor process. If your MCP client/LLM is susceptible to **prompt injection** (for example: reading untrusted web pages or using untrusted MCP servers), it may generate destructive or exfiltrating code.
+This package executes LLM-generated C# code (including via reflection) with the same privileges as the Unity Editor process.
 
 Recommendations:
 
 - Review scripts before executing them.
-- Use a separate Unity project and/or run Unity in an isolated environment (VM/container) for higher-risk workflows.
+- Use a separate Unity project and/or run Unity in an isolated environment (VM/container).
 
 You are responsible for securing your environment and for any changes or data loss caused by executed scripts.
 
