@@ -156,7 +156,7 @@ namespace LoopMcpServer.Tests
 
             Debug.Log(logMsg);
             Debug.LogWarning(warnMsg);
-            
+
             // Capture error by wrapping in LogAssert.Expect
             LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex(".*TestError.*"));
             Debug.LogError(errMsg);
