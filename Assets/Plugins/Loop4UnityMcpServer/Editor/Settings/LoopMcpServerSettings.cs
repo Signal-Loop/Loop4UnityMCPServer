@@ -68,7 +68,7 @@ namespace LoopMcpServer.Settings
         {
             get
             {
-                var instance = Resources.Load<LoopMcpServerSettings>("LoopMcpServerSettings");
+                var instance = UnityEngine.Resources.Load<LoopMcpServerSettings>("LoopMcpServerSettings");
 
                 if (instance == null)
                 {

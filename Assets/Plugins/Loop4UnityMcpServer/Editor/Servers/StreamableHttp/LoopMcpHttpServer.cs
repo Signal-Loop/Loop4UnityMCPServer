@@ -303,7 +303,7 @@ namespace LoopMcpServer.Servers.StreamableHttp
         /// <summary>
         /// Log MCP configuration for Streamable HTTP transport
         /// </summary>
-        [MenuItem("Tools/LoopMcpServer/HTTP/Log MCP Configuration")]
+        [MenuItem("Tools/LoopMcpServer/HTTP/Print MCP configuration to console")]
         public static void LogMcpConfiguration()
         {
             var settings = LoopMcpServerSettings.Instance;
@@ -311,11 +311,9 @@ namespace LoopMcpServer.Servers.StreamableHttp
             // Configuration for direct HTTP connection (no proxy needed)
             string template = $@"{{
   ""mcpServers"": {{
-    ""unity-http"": {{
-      ""transport"": {{
+    ""loop-unity-http"": {{
         ""type"": ""http"",
         ""url"": ""http://127.0.0.1:{settings.HttpPort}{McpHttpTransport.EndpointPath}""
-      }}
     }}
   }}
 }}";

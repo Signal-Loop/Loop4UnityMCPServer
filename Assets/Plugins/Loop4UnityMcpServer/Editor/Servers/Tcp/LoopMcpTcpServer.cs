@@ -279,7 +279,7 @@ namespace LoopMcpServer.Servers.Tcp
         /// <summary>
         /// Log MCP configuration to console
         /// </summary>
-        [MenuItem("Tools/LoopMcpServer/STDIO/Log MCP Configuration")]
+        [MenuItem("Tools/LoopMcpServer/STDIO/Print MCP configuration to console")]
         public static void LogMcpConfiguration()
         {
             var settings = LoopMcpServerSettings.Instance;
@@ -288,7 +288,7 @@ namespace LoopMcpServer.Servers.Tcp
 
             string template = $@"{{
   ""mcpServers"": {{
-    ""unity"": {{
+    ""loop-unity-stdio"": {{
       ""command"": ""uv"",
       ""args"": [
         ""run"",
