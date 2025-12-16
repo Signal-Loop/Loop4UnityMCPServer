@@ -33,7 +33,6 @@ namespace LoopMcpServer.Tools
             "UnityEditor.CoreModule",
             "UnityEngine.TestRunner",
             "UnityEditor.TestRunner",
-            "LoopMcpServer",
             "UniTask"
         };
 

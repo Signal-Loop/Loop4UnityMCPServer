@@ -22,8 +22,8 @@ A Model Context Protocol (MCP) server for the Unity Editor that enables AI assis
 
 - **Unity Editor / Unity Engine API access**: Perform tasks available through public APIs or reflection
 - **Auto-start**: Server starts automatically with the Unity Editor
-- **STDIO transport (via bridge)**: No separate server process required for MCP clients
-- **Domain-reload safe**: Handles Unity domain reloads gracefully
+- **STDIO transport (via bridge)**: No separate server process required for MCP clients. Domain-reload safe, retries if domain reload is in progress. `uv` (Python package manager) is required.
+- **Streamable HTTP transport**: Alternative to STDIO bridge for MCP clients that support HTTP. No separate server process required. No uv required. Responds with error if domain reload is in progress.
 - **Extensible**: Add new tools, async tools, resources, or prompts by implementing interfaces anywhere in the codebase
 
 ## Security considerations
@@ -68,17 +68,19 @@ https://github.com/Signal-Loop/Loop4UnityMCPServer.git?path=Assets/Plugins/Loop4
 
 ### MCP client configuration
 
+### STDIO
+
 Example configuration (using `uv` to run the bridge):
 
 ```json
 {
   "mcpServers": {
-    "unity": {
+    "loop-unity-stdio": {
       "command": "uv",
       "args": [
         "run",
         "--directory",
-        "C:/Users/YOUR_USERNAME/path/to/Assets/Plugins/Loop4UnityMcpServer/Editor/STDIO~",
+        "C:/Users/tbory/source/Workspaces/Loop/Loop4UnityMCPServer/Assets/Plugins/Loop4UnityMcpServer/Editor/STDIO~",
         "loop-mcp-stdio",
         "--host",
         "localhost",
@@ -92,17 +94,61 @@ Example configuration (using `uv` to run the bridge):
 
 Replace `C:/Users/YOUR_USERNAME/path/to/...` with the actual path to your Unity project.
 
+#### Streamable HTTP
+
+```json
+{
+  "mcpServers": {
+    "loop-unity-http": {
+      "url": "http://127.0.0.1:3001/mcp/",
+      "type": "http"
+    }
+  }
+}
+```
+
 ### Server configuration (Unity)
 
-1. Navigate to the `Resources/` folder in the package.
+Access settings via **Tools/LoopMcpServer/Show Settings** or create manually:
+
+1. Navigate to the `Assets/Resources/` folder
 2. Create the settings asset: **Right Click > Create > LoopMcpServer > Server Settings**
-3. Configure the port (default: `21088`) and other options as needed.
+3. Configure options:
+   - **Server Selection**: Choose STDIO (TCP) or HTTP server for auto-start
+   - **Verbose Logging**: Enable detailed logging for debugging
+   - **TCP Server**: Port (default: `21088`), backlog, timeouts
+   - **HTTP Server**: Port (default: `3001`), session timeout, SSE keep-alive interval
 
 ## Menu commands
 
-- **Tools/LoopMcpServer/Refresh Registry** — Re-scan for new tools/prompts/resources
-- **Tools/LoopMcpServer/Restart Server** — Restart the TCP server
-- **Tools/LoopMcpServer/Log MCP Configuration** — Log MCP client configuration to the Unity Console
+### General
+
+- **Tools/LoopMcpServer/Show Settings** — Open the server settings asset in the inspector
+
+### STDIO Server (TCP)
+
+- **Tools/LoopMcpServer/STDIO/Refresh Registry** — Re-scan for new tools/prompts/resources
+- **Tools/LoopMcpServer/STDIO/Restart Server** — Restart the TCP server
+- **Tools/LoopMcpServer/STDIO/Print MCP configuration to console** — Log MCP client configuration for STDIO bridge
+
+### HTTP Server
+
+- **Tools/LoopMcpServer/HTTP/Refresh Registry** — Re-scan for new tools/prompts/resources
+- **Tools/LoopMcpServer/HTTP/Restart Server** — Restart the HTTP server
+- **Tools/LoopMcpServer/HTTP/Log Server Status** — Display current HTTP server status
+- **Tools/LoopMcpServer/HTTP/Print MCP configuration to console** — Log MCP client configuration for HTTP server
+
+## Built-in tools and resources
+
+### Tools
+
+- **execute_csharp_script_in_unity_editor** — Execute C# scripts in Unity Editor context using Roslyn. Full access to UnityEngine, UnityEditor APIs, and reflection. Automatically captures logs, errors, and return values.
+- **read_unity_console_logs** — Read Unity Editor Console logs with configurable entry limits (1-1000, default 200)
+- **run_unity_tests** — Run Unity tests via TestRunnerApi. Supports EditMode, PlayMode, or both. Can run all tests or filter by fully qualified test names.
+
+### Resources
+
+- **unity://console/logs** — Unity Console Logs resource that provides access to Editor console logs via reflection
 
 ## Extending (adding tools)
 
@@ -178,6 +224,9 @@ The Script Execution Tool currently allows a fixed set of assemblies. Future ver
 - UnityEngine.UIElementsModule
 - UnityEngine.UIModule
 - UnityEditor.CoreModule
+- UnityEngine.TestRunner
+- UnityEditor.TestRunner
+- UniTask
 
 ## STDIO bridge
 
@@ -189,7 +238,6 @@ Unity tests are in `Tests/` and can be run via the Unity Test Runner.
 
 ## Roadmap
 
-- Tools for reading Unity Console logs and running tests
 - Configurable list of available assemblies
 
 ## License
