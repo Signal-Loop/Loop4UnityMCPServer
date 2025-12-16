@@ -2,7 +2,9 @@
     "name": "LoopMcpServer",
     "rootNamespace": "",
     "references": [
-        "UniTask"
+        "UniTask",
+        "UnityEditor.TestRunner",
+        "UnityEngine.TestRunner"
     ],
     "includePlatforms": [
         "Editor"
