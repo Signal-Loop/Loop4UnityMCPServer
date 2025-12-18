@@ -13,6 +13,7 @@ namespace LoopMcpServer.Editor.Installer
         // Files to copy relative to source directory
         private static readonly string[] FilesToCopy =
         {
+            "src/loop_mcp_stdio/__init__.py",
             "src/loop_mcp_stdio/loop_mcp_bridge_stdio.py",
             "pyproject.toml",
             "uv.lock"
